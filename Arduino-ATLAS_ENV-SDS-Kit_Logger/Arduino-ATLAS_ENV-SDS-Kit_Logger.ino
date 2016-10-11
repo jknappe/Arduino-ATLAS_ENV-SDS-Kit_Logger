@@ -20,16 +20,25 @@
   RTC_DS1307 RTC;                   //Define RTC object
 #include <SD.h>                     //Using SD card to log data 
   File SDdata;                      //Define SDdata object 
+#include <AltSoftSerial.h>          //Using software serials on UNO: TX 9, RX 8, unusable 10
+  AltSoftSerial altSerial;          //Define altSerial object
 
 // DEFINE PINS
 //---------------------------------------------------------  
 const byte LEDPin = 2;              //LED pin 
 const byte SDPin = 10;              //SD shield CS pin (10 on datalogging shield, 53 on MEGA)
+const byte S1Pin = 7;               //Arduino pin 31 to control pin S1
+const byte S2Pin = 6;               //Arduino pin 32 to control pin S2
+const byte S3Pin = 5;               //Arduino pin 33 to control pin S3
 
 // DEFINE VARIABLES
 //---------------------------------------------------------  
 int measInterval = 10;             //Measuring interval in seconds
 boolean measFlag = 0;              //Flag for initiating measurement
+byte computer_bytes_received = 0;  //We need to know how many characters bytes have been received
+byte sensor_bytes_received = 0;    //We need to know how many characters bytes have been received
+char computerdata[20];             //20 byte character array to hold incoming data from computer
+char sensordata[30];               //30 byte character array to hold incoming data from the sensors
   
 //==========================================================================================
 
@@ -103,8 +112,20 @@ void setup() {
   Serial.println(filename);
 
 
+// INITIALIZE PORT MULTIPLiER
+//---------------------------------------------------------  
+  pinMode(S1Pin, OUTPUT);                                   //Set pin as output
+  pinMode(S2Pin, OUTPUT);                                   //Set pin as output
+  pinMode(S3Pin, OUTPUT);                                   //Set pin as output   
+
+  altSerial.begin(9600);                                    //Set the soft serial port to baud rate 9600
+
+
+
 // BLINK AT START
 //---------------------------------------------------------  
+  pinMode(LEDPin, OUTPUT);                                  //LED as output  
+  
   for (int i = 1; i < 4; i ++) {                            //FOR 1 to 3
     digitalWrite(LEDPin, HIGH);                             //Blink LED on/off
     delay(500);                                             //To indicate start of logging
@@ -114,6 +135,18 @@ void setup() {
   
 }                                                           //End VOID SETUP
 //==========================================================================================
+
+
+//===========================================================================================
+// FUNCTION SERIALEVENT
+//-------------------------------------------------------------------------------------------
+
+void serialEvent() {                          //Trigger interrupt when data coming from serial monitor is received
+  computer_bytes_received = Serial.readBytesUntil(13, computerdata, 20); 
+                                              //Read data sent from serial monitor into "computerdata" until <CR> (ASCII char 13) and return number of characters received
+  computerdata[computer_bytes_received] = 0;  //add NULL after last character received
+}                                            //End Function SERIALEVENT
+//===========================================================================================
 
 
 //==========================================================================================
@@ -126,20 +159,30 @@ void loop() {
 // SET FLAG FOR MEASURING
 //---------------------------------------------------------  
 
-  if ( (millis()/1000)%measInterval == 0) {                 //IF seconds since starts matches measInterval
-    measFlag = 1;                                           //Set measFlag HIGH
-  }                                                         //End IF    
+  if ( (millis()/1000)%measInterval == 0) {           //IF seconds since starts matches measInterval
+    measFlag = 1;                                     //Set measFlag HIGH
+
+    printNowTime();                                   //Print timestamp
+    
+    for (int portNr = 0; portNr < 5; portNr ++) {     //FOR 0 to 4  
+      measurePort(portNr);                            //Measure port
+      Serial.print(",");             
+      Serial.print(sensordata);                       //And print measured data
+    }                                                 //End FOR                  
+    
+    Serial.println();    
+  }                                                   //End IF    
 
 
   
-  measFlag = 0;                                             //Set measFlag LOW    
+  measFlag = 0;                                       //Set measFlag LOW    
 
-}                                                           //End VOID LOOP
+}                                                     //End VOID LOOP
 //==========================================================================================
 
 
 //==========================================================================================
-// VOID PRINTNOWTIME
+// FUNCTION PRINTNOWTIME
 //------------------------------------------------------------------------------------------
 
 void printNowTime() {               //To print current RTC time in DD/MM/YYYY HH:MM:SS format
@@ -171,3 +214,28 @@ void printNowTime() {               //To print current RTC time in DD/MM/YYYY HH
   
 }                                   //End VOID PRINTNOWTIME
 //==========================================================================================
+
+
+//==========================================================================================
+// FUNCTION MEASUREPORT
+//------------------------------------------------------------------------------------------
+
+char *measurePort(int portNr) {
+  digitalWrite(S1Pin, bitRead(portNr, 0));
+  digitalWrite(S2Pin, bitRead(portNr, 1));
+  digitalWrite(S3Pin, bitRead(portNr, 2));
+  delay(1000);    
+              
+  altSerial.print("r");                             //Send the command from the computer to the Atlas Scientific device using the softserial port
+  altSerial.print("\r");                            //After we send the command we send a carriage return <CR>
+  delay(1000);    
+             
+  if (altSerial.available() > 0) {                 //If data has been transmitted from an Atlas Scientific device
+    sensor_bytes_received = altSerial.readBytesUntil(13, sensordata, 30); //we read the data sent from the Atlas Scientific device until we see a <CR>. We also count how many character have been received
+    sensordata[sensor_bytes_received] = 0;         //Add "0" to array after last character received. This will stop us from transmitting incorrect data that may have been left in the buffer
+  } //end IF
+  delay(1000);
+  return sensordata;         
+}                                   //End MEASUREDATA
+//==========================================================================================
+
