@@ -28,6 +28,8 @@ const byte SDPin = 10;              //SD shield CS pin (10 on datalogging shield
 
 // DEFINE VARIABLES
 //---------------------------------------------------------  
+int measInterval = 10;             //Measuring interval in seconds
+boolean measFlag = 0;              //Flag for initiating measurement
   
 //==========================================================================================
 
@@ -121,8 +123,16 @@ void setup() {
 
 void loop() {
 
+// COUNT TIME SINCE START
+//---------------------------------------------------------  
 
-            
+ // unsigned long secSinceStart = millis()/1000;              //Count seconds since start of program
+  if ( (millis()/1000)%measInterval == 0) {
+    measFlag = 1;        
+  }
+  Serial.println(measFlag);
+  measFlag = 0;
+  delay(1000);
 }                                                           //End VOID LOOP
 //==========================================================================================
 

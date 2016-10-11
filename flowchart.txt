@@ -9,6 +9,8 @@ SETUP
 + indicate start of program on LED (blink)
 
 LOOP
++ start timer for seconds since start
++ compare timer to measuring interval and change measuring flag
 - take current time
 - turn on sensor multiplexer with i sensors
 	- turn on sensor i
