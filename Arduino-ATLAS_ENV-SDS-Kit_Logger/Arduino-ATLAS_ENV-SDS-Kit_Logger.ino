@@ -63,7 +63,7 @@ void loop() {
 
 
 //==========================================================================================
-// VOID CHAR NOWTIME
+// VOID PRINTNOWTIME
 //------------------------------------------------------------------------------------------
 
 void printNowTime() {               //To print current RTC time in DD/MM/YYYY HH:MM:SS format
