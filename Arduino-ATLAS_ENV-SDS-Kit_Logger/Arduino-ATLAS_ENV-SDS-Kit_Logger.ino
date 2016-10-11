@@ -34,7 +34,6 @@ const byte S3Pin = 5;               //Arduino pin 33 to control pin S3
 // DEFINE VARIABLES
 //---------------------------------------------------------  
 int measInterval = 10;             //Measuring interval in seconds
-boolean measFlag = 0;              //Flag for initiating measurement
 byte computer_bytes_received = 0;  //We need to know how many characters bytes have been received
 byte sensor_bytes_received = 0;    //We need to know how many characters bytes have been received
 char computerdata[20];             //20 byte character array to hold incoming data from computer
@@ -160,7 +159,6 @@ void loop() {
 //---------------------------------------------------------  
 
   if ( (millis()/1000)%measInterval == 0) {           //IF seconds since starts matches measInterval
-    measFlag = 1;                                     //Set measFlag HIGH
 
     printNowTime();                                   //Print timestamp
     
@@ -175,7 +173,6 @@ void loop() {
 
 
   
-  measFlag = 0;                                       //Set measFlag LOW    
 
 }                                                     //End VOID LOOP
 //==========================================================================================
