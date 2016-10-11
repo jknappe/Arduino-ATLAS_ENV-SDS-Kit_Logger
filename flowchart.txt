@@ -11,14 +11,14 @@ SETUP
 LOOP
 + start timer for seconds since start
 + compare timer to measuring interval and change measuring flag
-- take current time
-- turn on sensor multiplexer with i sensors
-	- turn on sensor i
++ take current time
++ turn on sensor multiplexer with i sensors
+	+ turn on sensor i
 	- wait specified settling time for sensor i
-	- measure sensor i
-	- switch off sensor i
+	+ measure sensor i
+	+ switch off sensor i
 	- save sensor i reading in variable
-	- turn on to sensor i+1 ...
+	+ turn on to sensor i+1 ...
 - tun off multiplexer sensor data
 - write data to SD card/print to console
 

@@ -33,11 +33,11 @@ const byte S3Pin = 5;               //Arduino pin 33 to control pin S3
 
 // DEFINE VARIABLES
 //---------------------------------------------------------  
-int measInterval = 10;             //Measuring interval in seconds
-byte computer_bytes_received = 0;  //We need to know how many characters bytes have been received
-byte sensor_bytes_received = 0;    //We need to know how many characters bytes have been received
-char computerdata[20];             //20 byte character array to hold incoming data from computer
-char sensordata[30];               //30 byte character array to hold incoming data from the sensors
+int measInterval = 10;              //Measuring interval in seconds
+byte loggerBytesSent = 0;           //Length of bytes sent from logger
+byte sensorBytesReceived = 0;       //Length of bytes received from sensors
+char loggerCommand[20];             //Array to hold outcoming data from logger
+char sensorData[30];                //Array to hold incoming data from sensors
   
 //==========================================================================================
 
@@ -92,7 +92,7 @@ void setup() {
   
   for (int i = 1; i < 10000; i++) {                         //FOR 1 to 10,000
     filename[4] = (i/1000)%10 + '0';                        //And create accordingly numbered filenames 
-    filename[5] = (i/100)%10 + '0';                         //With ZERO as escape for char at end
+    filename[5] = (i/100)%10 + '0';                         //And add NULL as escape character
     filename[6] = (i/10)%10 + '0';                                
     filename[7] = i%10 + '0';                          
     if (!SD.exists(filename)) {                             //IF filename does not exists  
@@ -140,11 +140,12 @@ void setup() {
 // FUNCTION SERIALEVENT
 //-------------------------------------------------------------------------------------------
 
-void serialEvent() {                          //Trigger interrupt when data coming from serial monitor is received
-  computer_bytes_received = Serial.readBytesUntil(13, computerdata, 20); 
-                                              //Read data sent from serial monitor into "computerdata" until <CR> (ASCII char 13) and return number of characters received
-  computerdata[computer_bytes_received] = 0;  //add NULL after last character received
-}                                            //End Function SERIALEVENT
+void serialEvent() {                                              //Trigger interrupt for incoming data from serial
+  
+  loggerBytesSent = Serial.readBytesUntil(13, loggerCommand, 20); //Read data from serial and return number of characters received
+  loggerCommand[loggerBytesSent] = 0;                             //And add NULL as escape character
+  
+}                                                                 //End Function SERIALEVENT
 //===========================================================================================
 
 
@@ -165,7 +166,7 @@ void loop() {
     for (int portNr = 0; portNr < 5; portNr ++) {     //FOR 0 to 4  
       measurePort(portNr);                            //Measure port
       Serial.print(",");             
-      Serial.print(sensordata);                       //And print measured data
+      Serial.print(sensorData);                       //And print measured data
     }                                                 //End FOR                  
     
     Serial.println();    
@@ -217,22 +218,24 @@ void printNowTime() {               //To print current RTC time in DD/MM/YYYY HH
 // FUNCTION MEASUREPORT
 //------------------------------------------------------------------------------------------
 
-char *measurePort(int portNr) {
-  digitalWrite(S1Pin, bitRead(portNr, 0));
+char *measurePort(int portNr) {                                           //To measure ports on port multiplier
+  
+  digitalWrite(S1Pin, bitRead(portNr, 0));                                //Convert portNr into binary on S-ports
   digitalWrite(S2Pin, bitRead(portNr, 1));
   digitalWrite(S3Pin, bitRead(portNr, 2));
-  delay(1000);    
+  delay(100);                                                             //Wait for switch of ports  
               
-  altSerial.print("r");                             //Send the command from the computer to the Atlas Scientific device using the softserial port
-  altSerial.print("\r");                            //After we send the command we send a carriage return <CR>
-  delay(1000);    
+  altSerial.print("r");                                                   //Send measure command from serial to multiplier
+  altSerial.print("\r");                                                  //Send carriage return <CR> as ENTER
+  delay(1000);                                                            //Wait for sensor stabilization (TO DO: NEEDS SENSOR SPECIFIC ADJUSTMENT)
              
-  if (altSerial.available() > 0) {                 //If data has been transmitted from an Atlas Scientific device
-    sensor_bytes_received = altSerial.readBytesUntil(13, sensordata, 30); //we read the data sent from the Atlas Scientific device until we see a <CR>. We also count how many character have been received
-    sensordata[sensor_bytes_received] = 0;         //Add "0" to array after last character received. This will stop us from transmitting incorrect data that may have been left in the buffer
-  } //end IF
-  delay(1000);
-  return sensordata;         
-}                                   //End MEASUREDATA
+  if (altSerial.available() > 0) {                                        //IF data was transmitted from multiplier
+    sensorBytesReceived = altSerial.readBytesUntil(13, sensorData, 30);   //Read data and count characters received
+    sensorData[sensorBytesReceived] = 0;                                  //And add NULL as escape character
+  }                                                                       //End IF
+  
+  delay(100);
+  return sensorData;         
+}                                                                        //End MEASUREDATA
 //==========================================================================================
 
