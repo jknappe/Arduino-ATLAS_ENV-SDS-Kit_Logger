@@ -16,10 +16,12 @@
 // INCLUDE LIBRARIES
 //---------------------------------------------------------  
 #include <Wire.h>                   //Connecting to RTC
-#include "RTClib.h"                 //Using RTC for timestamp
+#include <RTClib.h>                 //Using RTC for timestamp
   RTC_DS1307 RTC;                   //Define RTC object
-#include <SD.h>                     //Using SD card to log data 
-  File SDdata;                      //Define SDdata object 
+#include <SPI.h>                    //COMMENTING NEEDED
+#include <SdFat.h>                  //COMMENTING NEEDED
+  SdFat sd;                         //COMMENTING NEEDED
+  SdFile file;                      //COMMENTING NEEDED
 #include <AltSoftSerial.h>          //Using software serials on UNO: TX 9, RX 8, unusable 10
   AltSoftSerial altSerial;          //Define altSerial object
 
@@ -78,7 +80,7 @@ void setup() {
     digitalWrite(SDPin, HIGH);                              //Activate internal pullup resistor
   Serial.print("Initializing SD Card: ");
   
-  if (!SD.begin(SDPin)) {                                   //IF SD is not found
+  if (!sd.begin(SDPin, SPI_HALF_SPEED)) {                   //IF SD is not found
     Serial.println("SD not found.");                        //Print error message
     while(1);                                               //And halt program
   }                                                         //End IF    
@@ -88,27 +90,32 @@ void setup() {
 // CREATE DATA FILE
 //---------------------------------------------------------  
   Serial.print("Creating data file: ");
-  char filename[] = "DATA0000.CSV";                         //Create dummy filename 
+  char fileName[] = "DATA0000.CSV";                         //Create dummy filename 
   
   for (int i = 1; i < 10000; i++) {                         //FOR 1 to 10,000
-    filename[4] = (i/1000)%10 + '0';                        //And create accordingly numbered filenames 
-    filename[5] = (i/100)%10 + '0';                         //And add NULL as escape character
-    filename[6] = (i/10)%10 + '0';                                
-    filename[7] = i%10 + '0';                          
-    if (!SD.exists(filename)) {                             //IF filename does not exists  
-      SDdata = SD.open(filename, FILE_WRITE);               //Name the file and make it writable  
+    fileName[4] = (i/1000)%10 + '0';                        //And create accordingly numbered filenames 
+    fileName[5] = (i/100)%10 + '0';                         //And add NULL as escape character
+    fileName[6] = (i/10)%10 + '0';                                
+    fileName[7] = i%10 + '0';                          
+    if (!sd.exists(fileName)) {                             //IF filename does not exists  
+    //  file = sd.open(fileName, FILE_WRITE);               //Name the file and make it writable  
       break;                                                //And leave the loop  
     }                                                       //End IF    
   }                                                         //End FOR    
   
-  if (!SDdata) {                                            //IF data file object is not found
+  if (!file.open(fileName, O_CREAT | O_WRITE)) {            //COMMENTING NEEDED
     Serial.println("Cannot create data file..");            //Print error message
     while(1);                                               //And halt program
-  }                                                         //End IF    
+  }                                                         //End IF
+  
+  //if (!file) {                                              //IF data file object is not found
+  //  Serial.println("Cannot create data file..");            //Print error message
+  //  while(1);                                               //And halt program
+  //}                                                         //End IF    
   
   Serial.println("successful.");
   Serial.print("Logging to: ");
-  Serial.println(filename);
+  Serial.println(fileName);
 
 
 // INITIALIZE PORT MULTIPLiER
@@ -174,6 +181,7 @@ void loop() {
 
 
   
+  file.close();                                       //Close file on SD card
 
 }                                                     //End VOID LOOP
 //==========================================================================================
