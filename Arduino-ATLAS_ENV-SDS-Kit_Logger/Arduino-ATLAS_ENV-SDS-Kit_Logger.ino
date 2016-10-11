@@ -56,40 +56,40 @@ void setup() {
 
 // SETTING RTC
 //---------------------------------------------------------  
-  Serial.print("Initializing RTC: ");
+  Serial.print(F("Initializing RTC: "));
   
   if (!RTC.begin()) {                                       //IF RTC is not found
-    Serial.println("RTC not found.");                       //Print error message
+    Serial.println(F("RTC not found."));                    //Print error message
     while(1);                                               //And halt program
   }                                                         //End IF    
-  Serial.println("successful"); 
+  Serial.println(F("successful")); 
   
   if (!RTC.isrunning()) {                                   //IF RTC is not running
     RTC.adjust(DateTime(F(__DATE__), F(__TIME__)));         //Initialize RTC with time of compilation
   }                                                         //End IF    
   
-  Serial.print("RTC time is set to: ");
+  Serial.print(F("RTC time is set to: "));
   printNowTime();                                           //Print current RTC time
   Serial.println();
-  Serial.println("To reset RTC to system time, change battery and compile sketch.");
+  Serial.println(F("To reset RTC to system time, change battery and compile sketch."));
 
 
 // SETTING SD CARD
 //---------------------------------------------------------  
   pinMode(SDPin, OUTPUT);                                   //Set SDPin as output
     digitalWrite(SDPin, HIGH);                              //Activate internal pullup resistor
-  Serial.print("Initializing SD Card: ");
+  Serial.print(F("Initializing SD Card: "));
   
   if (!sd.begin(SDPin, SPI_HALF_SPEED)) {                   //IF SD is not found
-    Serial.println("SD not found.");                        //Print error message
+    Serial.println(F("SD not found."));                     //Print error message
     while(1);                                               //And halt program
   }                                                         //End IF    
-  Serial.println("successful.");
+  Serial.println(F("successful."));
 
 
 // CREATE DATA FILE
 //---------------------------------------------------------  
-  Serial.print("Creating data file: ");
+  Serial.print(F("Creating data file: "));
   char fileName[] = "DATA0000.CSV";                         //Create dummy filename 
   
   for (int i = 1; i < 10000; i++) {                         //FOR 1 to 10,000
@@ -104,17 +104,17 @@ void setup() {
   }                                                         //End FOR    
   
   if (!file.open(fileName, O_CREAT | O_WRITE)) {            //COMMENTING NEEDED
-    Serial.println("Cannot create data file..");            //Print error message
+    Serial.println(F("Cannot create data file.."));         //Print error message
     while(1);                                               //And halt program
   }                                                         //End IF
   
   //if (!file) {                                              //IF data file object is not found
-  //  Serial.println("Cannot create data file..");            //Print error message
+  //  Serial.println(F("Cannot create data file.."));         //Print error message
   //  while(1);                                               //And halt program
   //}                                                         //End IF    
   
-  Serial.println("successful.");
-  Serial.print("Logging to: ");
+  Serial.println(F("successful."));
+  Serial.print(F("Logging to: "));
   Serial.println(fileName);
 
 
@@ -172,7 +172,7 @@ void loop() {
     
     for (int portNr = 0; portNr < 5; portNr ++) {     //FOR 0 to 4  
       measurePort(portNr);                            //Measure port
-      Serial.print(",");             
+      Serial.print(F(","));             
       Serial.print(sensorData);                       //And print measured data
     }                                                 //End FOR                  
     
@@ -204,19 +204,19 @@ void printNowTime() {               //To print current RTC time in DD/MM/YYYY HH
     Serial.print(0);                //Print leading zero
   }                                 //End IF
   Serial.print(now.month(), DEC);   //Print month   
-  Serial.print("/");                //Print separator   
+  Serial.print(F("/"));             //Print separator   
   Serial.print(now.year(), DEC);    //Print year   
-  Serial.print(" ");                //Print separator
+  Serial.print(F(" "));             //Print separator
   if (now.hour() < 10){             //IF hour < 10
     Serial.print(0);                //Print leading zero
   }                                 //End IF
   Serial.print(now.hour(), DEC);    //Print hour
-  Serial.print(":");                //Print separator
+  Serial.print(F(":"));             //Print separator
   if (now.minute() < 10){           //IF minute < 10
     Serial.print(0);                //Print leading zero;
   }                                 //End IF
   Serial.print(now.minute(), DEC);  //Print minute
-  Serial.print(":00");              //Print separator and seconds
+  Serial.print(F(":00"));           //Print separator and seconds
   
 }                                   //End VOID PRINTNOWTIME
 //==========================================================================================
