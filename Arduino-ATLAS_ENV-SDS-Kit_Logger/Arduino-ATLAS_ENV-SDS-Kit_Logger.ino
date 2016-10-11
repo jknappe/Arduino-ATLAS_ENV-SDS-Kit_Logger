@@ -16,6 +16,9 @@
 #include <Wire.h>                   // connecting to RTC
 #include "RTClib.h"                 // using RTC for timestamp
   RTC_DS1307 RTC;                   // define RTC object
+
+int time = 0;
+int plustime = 0;
   
 //==========================================================================================
 
@@ -36,11 +39,10 @@ void setup() {
   }                                                         //End IF    
   
   RTC.adjust(DateTime(F(__DATE__), F(__TIME__)));           //initialize RTC with time of compilation
-  Serial.print("RTC time is set to:");
-  Serial.println();
+  Serial.print("RTC time is set to: ");
+  printNowTime();
   
 }
-
 //==========================================================================================
 
 
@@ -51,47 +53,47 @@ void setup() {
 
 void loop() {
 
-    DateTime now = RTC.now();                     // fetch time from RTC
 
-      if (now.day() < 10){   // Add a zero, if necessary
-        Serial.print(0);
-      }
-      Serial.print(now.day(), DEC);        
-      Serial.print("/");  
-     if (now.month() < 10){   // Add a zero, if necessary
-        Serial.print(0);
-      }
-      Serial.print(now.month(), DEC);   
-      Serial.print("/");   
-      Serial.print(now.year(), DEC);   
-      Serial.print(" ");
-      if (now.hour() < 10){   // Add a zero, if necessary
-        Serial.print(0);
-      }
-        Serial.print(now.hour(), DEC);
-        Serial.print(":");
-      if (now.minute() < 10){   // Add a zero, if necessary
-         Serial.print(0);
-      }
-      Serial.print(now.minute(), DEC);
-      Serial.print(":");
-      if (now.second() < 10){   // Add a zero, if necessary
-        Serial.print(0);
-      }
-      Serial.print(now.second(), DEC);
-      Serial.println();
-      delay(1000);
-
-        
+            
 }
-
 //==========================================================================================
 
 
 //==========================================================================================
-// VOID LOOP
+// VOID CHAR NOWTIME
 //------------------------------------------------------------------------------------------
 
+void printNowTime() {
+  
+  DateTime now = RTC.now();                     // fetch time from RTC
 
-
+  if (now.day() < 10){   // Add a zero, if necessary
+    Serial.print(0);
+  }
+  Serial.print(now.day(), DEC);        
+  Serial.print("/");  
+  if (now.month() < 10){   // Add a zero, if necessary
+    Serial.print(0);
+  }
+  Serial.print(now.month(), DEC);   
+  Serial.print("/");   
+  Serial.print(now.year(), DEC);   
+  Serial.print(" ");
+  if (now.hour() < 10){   // Add a zero, if necessary
+    Serial.print(0);
+  }
+  Serial.print(now.hour(), DEC);
+  Serial.print(":");
+  if (now.minute() < 10){   // Add a zero, if necessary
+    Serial.print(0);
+  }
+  Serial.print(now.minute(), DEC);
+  Serial.print(":");
+  if (now.second() < 10){   // Add a zero, if necessary
+    Serial.print(0);
+  }
+  Serial.print(now.second(), DEC);
+  Serial.println();
+  
+}
 //==========================================================================================
