@@ -123,16 +123,17 @@ void setup() {
 
 void loop() {
 
-// COUNT TIME SINCE START
+// SET FLAG FOR MEASURING
 //---------------------------------------------------------  
 
- // unsigned long secSinceStart = millis()/1000;              //Count seconds since start of program
-  if ( (millis()/1000)%measInterval == 0) {
-    measFlag = 1;        
-  }
-  Serial.println(measFlag);
-  measFlag = 0;
-  delay(1000);
+  if ( (millis()/1000)%measInterval == 0) {                 //IF seconds since starts matches measInterval
+    measFlag = 1;                                           //Set measFlag HIGH
+  }                                                         //End IF    
+
+
+  
+  measFlag = 0;                                             //Set measFlag LOW    
+
 }                                                           //End VOID LOOP
 //==========================================================================================
 
