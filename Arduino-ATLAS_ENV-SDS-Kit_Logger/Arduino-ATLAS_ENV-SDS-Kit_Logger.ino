@@ -28,7 +28,6 @@ const byte SDPin = 10;              //SD shield CS pin (10 on datalogging shield
 
 // DEFINE VARIABLES
 //---------------------------------------------------------  
-
   
 //==========================================================================================
 
@@ -111,7 +110,7 @@ void setup() {
     delay(500);                                 
   }                                                         //End FOR    
   
-}
+}                                                           //End VOID SETUP
 //==========================================================================================
 
 
@@ -124,7 +123,7 @@ void loop() {
 
 
             
-}
+}                                                           //End VOID LOOP
 //==========================================================================================
 
 
@@ -159,5 +158,5 @@ void printNowTime() {               //To print current RTC time in DD/MM/YYYY HH
   Serial.print(now.minute(), DEC);  //Print minute
   Serial.print(":00");              //Print separator and seconds
   
-}
+}                                   //End VOID PRINTNOWTIME
 //==========================================================================================
