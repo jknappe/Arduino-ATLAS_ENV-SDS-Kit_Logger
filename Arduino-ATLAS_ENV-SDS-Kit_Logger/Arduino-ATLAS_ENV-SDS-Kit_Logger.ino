@@ -23,6 +23,7 @@
 
 // DEFINE PINS
 //---------------------------------------------------------  
+const byte LEDPin = 2;              //LED pin 
 const byte SDPin = 10;              //SD shield CS pin (10 on datalogging shield, 53 on MEGA)
 
 // DEFINE VARIABLES
@@ -74,12 +75,13 @@ void setup() {
   }                                                         //End IF    
   Serial.println("successful.");
 
+
 // CREATE DATA FILE
 //---------------------------------------------------------  
   Serial.print("Creating data file: ");
   char filename[] = "DATA0000.CSV";                         //Create dummy filename 
   
-  for (int i = 1; i < 10000; i++) {                         //Interate from 1 to 10,000
+  for (int i = 1; i < 10000; i++) {                         //FOR 1 to 10,000
     filename[4] = (i/1000)%10 + '0';                        //And create accordingly numbered filenames 
     filename[5] = (i/100)%10 + '0';                         //With ZERO as escape for char at end
     filename[6] = (i/10)%10 + '0';                                
@@ -98,6 +100,16 @@ void setup() {
   Serial.println("successful.");
   Serial.print("Logging to: ");
   Serial.println(filename);
+
+
+// BLINK AT START
+//---------------------------------------------------------  
+  for (int i = 1; i < 4; i ++) {                            //FOR 1 to 3
+    digitalWrite(LEDPin, HIGH);                             //Blink LED on/off
+    delay(500);                                             //To indicate start of logging
+    digitalWrite(LEDPin, LOW);
+    delay(500);                                 
+  }                                                         //End FOR    
   
 }
 //==========================================================================================

@@ -6,7 +6,7 @@ SETUP
 + check files on SD card
 + create new data file
 + open data file on SD
-- indicate start of program on LED (blink)
++ indicate start of program on LED (blink)
 
 LOOP
 - take current time
