@@ -3,9 +3,9 @@ Flowchart for Arduino-ATLAS_ENV-SDS-Kit_Logger
 SETUP
 + initialize RTC with compilation time
 + check if SD card present/initialize
-- check files on SD card
-- create new data file
-- open data file on SD
++ check files on SD card
++ create new data file
++ open data file on SD
 - indicate start of program on LED (blink)
 
 LOOP

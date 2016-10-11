@@ -14,7 +14,7 @@
 //-------------------------------------------------------------------------------------------
 
 // INCLUDE LIBRARIES
-//---------------------------------------  
+//---------------------------------------------------------  
 #include <Wire.h>                   //Connecting to RTC
 #include "RTClib.h"                 //Using RTC for timestamp
   RTC_DS1307 RTC;                   //Define RTC object
@@ -22,11 +22,11 @@
   File SDdata;                      //Define SDdata object 
 
 // DEFINE PINS
-//---------------------------------------  
+//---------------------------------------------------------  
 const byte SDPin = 10;              //SD shield CS pin (10 on datalogging shield, 53 on MEGA)
 
 // DEFINE VARIABLES
-//---------------------------------------  
+//---------------------------------------------------------  
 
   
 //==========================================================================================
@@ -41,8 +41,9 @@ void setup() {
   Serial.begin(9600);               //Set the hardware serial port to baud rate 9600  
   Wire.begin();                     //Start I2C communication
 
+
 // SETTING RTC
-//---------------------------------------  
+//---------------------------------------------------------  
   Serial.print("Initializing RTC: ");
   
   if (!RTC.begin()) {                                       //IF RTC is not found
@@ -58,10 +59,11 @@ void setup() {
   Serial.print("RTC time is set to: ");
   printNowTime();                                           //Print current RTC time
   Serial.println();
-  Serial.println("Change battery and compile sketch to reset RTC to system time.");
+  Serial.println("To reset RTC to system time, change battery and compile sketch.");
+
 
 // SETTING SD CARD
-//---------------------------------------    
+//---------------------------------------------------------  
   pinMode(SDPin, OUTPUT);                                   //Set SDPin as output
     digitalWrite(SDPin, HIGH);                              //Activate internal pullup resistor
   Serial.print("Initializing SD Card: ");
@@ -71,6 +73,31 @@ void setup() {
     while(1);                                               //And halt program
   }                                                         //End IF    
   Serial.println("successful.");
+
+// CREATE DATA FILE
+//---------------------------------------------------------  
+  Serial.print("Creating data file: ");
+  char filename[] = "DATA0000.CSV";                         //Create dummy filename 
+  
+  for (int i = 1; i < 10000; i++) {                         //Interate from 1 to 10,000
+    filename[4] = (i/1000)%10 + '0';                        //And create accordingly numbered filenames 
+    filename[5] = (i/100)%10 + '0';                         //With ZERO as escape for char at end
+    filename[6] = (i/10)%10 + '0';                                
+    filename[7] = i%10 + '0';                          
+    if (!SD.exists(filename)) {                             //IF filename does not exists  
+      SDdata = SD.open(filename, FILE_WRITE);               //Name the file and make it writable  
+      break;                                                //And leave the loop  
+    }                                                       //End IF    
+  }                                                         //End FOR    
+  
+  if (!SDdata) {                                            //IF data file object is not found
+    Serial.println("Cannot create data file..");            //Print error message
+    while(1);                                               //And halt program
+  }                                                         //End IF    
+  
+  Serial.println("successful.");
+  Serial.print("Logging to: ");
+  Serial.println(filename);
   
 }
 //==========================================================================================
