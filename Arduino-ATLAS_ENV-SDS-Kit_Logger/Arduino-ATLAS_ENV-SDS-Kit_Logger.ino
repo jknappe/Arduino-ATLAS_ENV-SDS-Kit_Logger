@@ -16,9 +16,6 @@
 #include <Wire.h>                   // connecting to RTC
 #include "RTClib.h"                 // using RTC for timestamp
   RTC_DS1307 RTC;                   // define RTC object
-
-int time = 0;
-int plustime = 0;
   
 //==========================================================================================
 
@@ -34,12 +31,15 @@ void setup() {
 
 // SETTING RTC
 //---------------------------------------  
-  if (!RTC.begin()) {                                       //IF RTC in not running
-    Serial.println("RTC not found.");                       //print error message
-    while(1);                                               //and halt program
+  if (!RTC.begin()) {                                       //IF RTC is not found
+    Serial.println("RTC not found.");                       //Print error message
+    while(1);                                               //And halt program
+  }                                                         //End IF    
+
+  if (!RTC.isrunning()) {                                     //IF RTC is not running
+    RTC.adjust(DateTime(F(__DATE__), F(__TIME__)));         //Initialize RTC with time of compilation
   }                                                         //End IF    
   
-  RTC.adjust(DateTime(F(__DATE__), F(__TIME__)));           //Initialize RTC with time of compilation
   Serial.print("RTC time is set to: ");
   printNowTime();                                           //Print current RTC time
   Serial.println();
