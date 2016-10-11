@@ -157,11 +157,7 @@ void printNowTime() {               //To print current RTC time in DD/MM/YYYY HH
     Serial.print(0);                //Print leading zero;
   }                                 //End IF
   Serial.print(now.minute(), DEC);  //Print minute
-  Serial.print(":");                //Print separator
-  if (now.second() < 10){           //IF second < 10
-    Serial.print(0);                //Print leading zero
-  }                                 //End IF
-  Serial.print(now.second(), DEC);  //Print second
+  Serial.print(":00");              //Print separator and seconds
   
 }
 //==========================================================================================
