@@ -2,7 +2,7 @@
 // PREAMBLE
 //-------------------------------------------------------------------------------------------
 
-//Logger type: Arduino UNO with Adafruit Datalogging Shield
+//Logger type: Arduino MEGA with RTC and SD shield
  
 //Program author: Jan Knappe
 //Contact: jan.knappe@tcd.ie
@@ -27,11 +27,11 @@
 
 // DEFINE PINS
 //---------------------------------------------------------  
-const byte LEDPin = 2;              //LED pin 
-const byte SDPin = 10;              //SD shield CS pin (10 on datalogging shield, 53 on MEGA)
-const byte S1Pin = 7;               //Arduino pin 31 to control pin S1
-const byte S2Pin = 6;               //Arduino pin 32 to control pin S2
-const byte S3Pin = 5;               //Arduino pin 33 to control pin S3
+const byte LEDPin = 41;             //LED pin 
+const byte SDPin = 53;              //SD shield CS pin (10 on datalogging shield, 53 on MEGA)
+const byte S1Pin = 31;              //Arduino pin 31 to control pin S1
+const byte S2Pin = 32;              //Arduino pin 32 to control pin S2
+const byte S3Pin = 33;              //Arduino pin 33 to control pin S3
 
 // DEFINE VARIABLES
 //---------------------------------------------------------  
@@ -118,7 +118,7 @@ void setup() {
   Serial.println(fileName);
 
 
-// INITIALIZE PORT MULTIPLiER
+// INITIALIZE PORT MULTIPLEXER
 //---------------------------------------------------------  
   pinMode(S1Pin, OUTPUT);                                   //Set pin as output
   pinMode(S2Pin, OUTPUT);                                   //Set pin as output
@@ -226,18 +226,18 @@ void printNowTime() {               //To print current RTC time in DD/MM/YYYY HH
 // FUNCTION MEASUREPORT
 //------------------------------------------------------------------------------------------
 
-char *measurePort(int portNr) {                                           //To measure ports on port multiplier
+char *measurePort(int portNr) {                                           //To measure ports on port multiplexer
   
   digitalWrite(S1Pin, bitRead(portNr, 0));                                //Convert portNr into binary on S-ports
   digitalWrite(S2Pin, bitRead(portNr, 1));
   digitalWrite(S3Pin, bitRead(portNr, 2));
   delay(100);                                                             //Wait for switch of ports  
               
-  altSerial.print("r");                                                   //Send measure command from serial to multiplier
+  altSerial.print("r");                                                   //Send measure command from serial to multiplexer
   altSerial.print("\r");                                                  //Send carriage return <CR> as ENTER
   delay(1000);                                                            //Wait for sensor stabilization (TO DO: NEEDS SENSOR SPECIFIC ADJUSTMENT)
              
-  if (altSerial.available() > 0) {                                        //IF data was transmitted from multiplier
+  if (altSerial.available() > 0) {                                        //IF data was transmitted from multiplexer
     sensorBytesReceived = altSerial.readBytesUntil(13, sensorData, 30);   //Read data and count characters received
     sensorData[sensorBytesReceived] = 0;                                  //And add NULL as escape character
   }                                                                       //End IF

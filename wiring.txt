@@ -1,31 +1,40 @@
 Wiring for Flowchart for Arduino-ATLAS_ENV-SDS-Kit_Logger
 
-Arduino UNO - Reset pushbutton
+Arduino MEGA - Reset pushbutton
 RESET - connector 1
 GND - connector 1
-LED - 2
+LED - 41
 
-Arduino UNO - SD card breakout
-MISO - 12
-SCK  - 13
-MOSI - 11
-CS   - 10
+Arduino MEGA - SD card breakout
+GND  - GND
+MISO - 50
+SCK  - 52
+MOSI - 51
+CS   - 53
+5V   - VCC
+3.3V - (unconnected)
+GND  - GND
 
-Arduino UNO - Real Time Clock (RTC)
-SCL - A5
-SDA - A4
+Arduino MEGA - Real Time Clock (RTC)
+DS  - (unconnected)
+SCL - 21
+SDA - 20
+VCC - 5V
+GND - GND
 
-Arduino UNO - Serial Port Expander
+Arduino MEGA - Serial Port Multiplexer
 5V - VCC 
-9 - RX IN 
-8 - TX IN 
-7 - S1 
-6 - S2
-5 - S3 
+45 - (unusable)
+46 - (unusable)
+46 - RX IN 
+48 - TX IN 
+31 - S1 
+32 - S2
+33 - S3 
 GND - GND 
 
-T on P1 via Serial Port Expander
-EC on P2 via Serial Port Expander
-pH on P3 via Serial Port Expander
-DO on P4 via Serial Port Expander
-ORP on P5 via Serial Port Expander
+T on P1 via Serial Port Multiplexer
+EC on P2 via Serial Port Multiplexer
+pH on P3 via Serial Port Multiplexer
+DO on P4 via Serial Port Multiplexer
+ORP on P5 via Serial Port Multiplexer
