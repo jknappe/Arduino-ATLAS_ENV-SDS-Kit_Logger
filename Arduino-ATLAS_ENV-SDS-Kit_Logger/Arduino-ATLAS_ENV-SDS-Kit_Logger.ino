@@ -18,10 +18,10 @@
 #include <Wire.h>                   //Connecting to RTC
 #include <RTClib.h>                 //Using RTC for timestamp
   RTC_DS1307 RTC;                   //Define RTC object
-#include <SPI.h>                    //COMMENTING NEEDED
-#include <SdFat.h>                  //COMMENTING NEEDED
-  SdFat sd;                         //COMMENTING NEEDED
-  SdFile file;                      //COMMENTING NEEDED
+#include <SPI.h>                    //Enable Serial Peripheral Interface communication
+#include <SdFat.h>                  //Communicate with SD card
+  SdFat sd;                         //Defining SdFat object
+  SdFile file;                      //Defining SdFile object
 #include <AltSoftSerial.h>          //Using software serials on UNO: TX 9, RX 8, unusable 10
   AltSoftSerial altSerial;          //Define altSerial object
 
@@ -98,21 +98,15 @@ void setup() {
     fileName[6] = (i/10)%10 + '0';                                
     fileName[7] = i%10 + '0';                          
     if (!sd.exists(fileName)) {                             //IF filename does not exists  
-    //  file = sd.open(fileName, FILE_WRITE);               //Name the file and make it writable  
       break;                                                //And leave the loop  
     }                                                       //End IF    
   }                                                         //End FOR    
   
-  if (!file.open(fileName, O_CREAT | O_WRITE)) {            //COMMENTING NEEDED
+  if (!file.open(fileName, O_CREAT | O_WRITE)) {            //IF file cannot be created or opened for writing
     Serial.println(F("Cannot create data file.."));         //Print error message
     while(1);                                               //And halt program
   }                                                         //End IF
-  
-  //if (!file) {                                              //IF data file object is not found
-  //  Serial.println(F("Cannot create data file.."));         //Print error message
-  //  while(1);                                               //And halt program
-  //}                                                         //End IF    
-  
+    
   Serial.println(F("successful."));
   Serial.print(F("Logging to: "));
   Serial.println(fileName);
