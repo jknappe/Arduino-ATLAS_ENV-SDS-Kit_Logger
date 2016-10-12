@@ -15,15 +15,17 @@
 
 // INCLUDE LIBRARIES
 //---------------------------------------------------------  
-#include <Wire.h>                   //Connecting to RTC
-#include <RTClib.h>                 //Using RTC for timestamp
-  RTC_DS1307 RTC;                   //Define RTC object
-#include <SPI.h>                    //Enable Serial Peripheral Interface communication
-#include <SdFat.h>                  //Communicate with SD card
-  SdFat sd;                         //Defining SdFat object
-  SdFile file;                      //Defining SdFile object
-#include <AltSoftSerial.h>          //Using software serials on UNO: TX 9, RX 8, unusable 10
-  AltSoftSerial altSerial;          //Define altSerial object
+#include <Wire.h>                           //Connecting to RTC
+#include <RTClib.h>                         //Using RTC for timestamp
+  RTC_DS1307 RTC;                           //Define RTC object
+#include <SPI.h>                            //Enable Serial Peripheral Interface communication
+#include <SdFat.h>                          //Communicate with SD card
+  SdFat sd;                                 //Defining SdFat object
+  SdFile file;                              //Defining SdFile object
+#include <AltSoftSerial.h>                  //Using software serials on MEGA: TX 46, RX 48, unusable 44,45
+  AltSoftSerial altSerial;                  //Define altSerial object
+#include <SoftwareSerial.h>                 //Access software serial (for BT communication)
+  SoftwareSerial bluetoothSerial(11, 12);   //Define RX, TX for BT communication
 
 // DEFINE PINS
 //---------------------------------------------------------  
@@ -40,6 +42,7 @@ byte loggerBytesSent = 0;           //Length of bytes sent from logger
 byte sensorBytesReceived = 0;       //Length of bytes received from sensors
 char loggerCommand[20];             //Array to hold outcoming data from logger
 char sensorData[30];                //Array to hold incoming data from sensors
+char bluetoothSend;                 //Variable to receive BT data
   
 //==========================================================================================
 
@@ -72,6 +75,14 @@ void setup() {
   printNowTime();                                           //Print current RTC time
   Serial.println();
   Serial.println(F("To reset RTC to system time, change battery and compile sketch."));
+
+
+// INITIALIZE BLUETOOTH CONNECTION
+//---------------------------------------------------------  
+  bluetoothSerial.begin(9600);                              //Set BT serial port to baud rate 9600
+  bluetoothSerial.println("Bluetooth connection established.");
+
+  Serial1.begin(9600);
 
 
 // SETTING SD CARD
@@ -121,7 +132,6 @@ void setup() {
   altSerial.begin(9600);                                    //Set the soft serial port to baud rate 9600
 
 
-
 // BLINK AT START
 //---------------------------------------------------------  
   pinMode(LEDPin, OUTPUT);                                  //LED as output  
@@ -156,6 +166,21 @@ void serialEvent() {                                              //Trigger inte
 
 
 void loop() {
+
+// BLUETOOTH
+//---------------------------------------------------------  
+   
+  if (Serial1.available()) {                           //COMMENTING NEEDED
+    int inByte = Serial1.read();
+    Serial.write(inByte);
+  }
+
+  if (Serial.available()) {
+    int inByte = Serial.read();
+    Serial1.write(inByte);
+  }
+   Serial1.println(millis());
+  
 
 // SET FLAG FOR MEASURING
 //---------------------------------------------------------  
