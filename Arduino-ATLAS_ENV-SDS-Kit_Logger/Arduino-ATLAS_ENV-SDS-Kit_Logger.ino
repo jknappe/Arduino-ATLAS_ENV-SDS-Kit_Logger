@@ -132,6 +132,11 @@ void setup() {
   altSerial.begin(9600);                                    //Set the soft serial port to baud rate 9600
 
 
+// WRITE DATA TABLE HEADERS
+//---------------------------------------------------------  
+  Serial.println(F("time, T, EC, pH, DO, ORP"));            //write header to serial output and data file
+  file.println(F("time, T, EC, pH, DO, ORP"));              //T [degC], EC [uS/cm], pH, DO [mg/L], ORP [mV]
+
 // BLINK AT START
 //---------------------------------------------------------  
   pinMode(LEDPin, OUTPUT);                                  //LED as output  
