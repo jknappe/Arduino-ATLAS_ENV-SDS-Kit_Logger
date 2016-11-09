@@ -135,7 +135,7 @@ void setup() {
 // WRITE DATA TABLE HEADERS
 //---------------------------------------------------------  
   Serial.println(F("time, T, EC, pH, DO, ORP"));            //write header to serial output and data file
-  file.println(F("time, T, EC, pH, DO, ORP"));              //T [degC], EC [uS/cm], pH, DO [mg/L], ORP [mV]
+    file.println(F("time, T, EC, pH, DO, ORP"));            //T [degC], EC [uS/cm], pH, DO [mg/L], ORP [mV]
 
 // BLINK AT START
 //---------------------------------------------------------  
@@ -205,7 +205,7 @@ void loop() {
 
 
   
-  file.close();                                       //Close file on SD card
+  file.flush();                                       //Close file on SD card
 
 }                                                     //End VOID LOOP
 //==========================================================================================
@@ -220,27 +220,41 @@ void printNowTime() {               //To print current RTC time in DD/MM/YYYY HH
   DateTime now = RTC.now();         //Fetch time from RTC
 
   if (now.day() < 10){              //IF days < 10
-    Serial.print(0);                //Print leading zero
+    Serial.print(0);                //Print leading zero to serial
+      file.print(0);                //and data file
   }                                 //End IF
-  Serial.print(now.day(), DEC);     //Print day        
-  Serial.print("/");                //Print separator  
+  Serial.print(now.day(), DEC);     //Print day to serial        
+    file.print(now.day(), DEC);     //and data file        
+  Serial.print("/");                //Print separator to serial  
+    file.print("/");                //and data file 
   if (now.month() < 10){            //IF month < 10
-    Serial.print(0);                //Print leading zero
+    Serial.print(0);                //Print leading zero to serial
+      file.print(0);                //and data file
   }                                 //End IF
-  Serial.print(now.month(), DEC);   //Print month   
-  Serial.print(F("/"));             //Print separator   
-  Serial.print(now.year(), DEC);    //Print year   
-  Serial.print(F(" "));             //Print separator
+  Serial.print(now.month(), DEC);   //Print month to serial   
+    file.print(now.month(), DEC);   //and data file  
+  Serial.print(F("/"));             //Print separator to serial   
+    file.print(F("/"));             //and data file   
+  Serial.print(now.year(), DEC);    //Print year to serial    
+    file.print(now.year(), DEC);    //and data file  
+  Serial.print(F(" "));             //Print separator to serial
+    file.print(F(" "));             //and data file
   if (now.hour() < 10){             //IF hour < 10
-    Serial.print(0);                //Print leading zero
+    Serial.print(0);                //Print leading zero to serial
+      file.print(0);                //and data file
   }                                 //End IF
-  Serial.print(now.hour(), DEC);    //Print hour
-  Serial.print(F(":"));             //Print separator
+  Serial.print(now.hour(), DEC);    //Print hour to serial
+    file.print(now.hour(), DEC);    //and data file
+  Serial.print(F(":"));             //Print separator to serial
+    file.print(F(":"));             //and data file
   if (now.minute() < 10){           //IF minute < 10
-    Serial.print(0);                //Print leading zero;
+    Serial.print(0);                //Print leading zero to serial
+      file.print(0);                //and data file
   }                                 //End IF
   Serial.print(now.minute(), DEC);  //Print minute
+    file.print(now.minute(), DEC);  //Print minute
   Serial.print(F(":00"));           //Print separator and seconds
+    file.print(F(":00"));           //Print separator and seconds
   
 }                                   //End VOID PRINTNOWTIME
 //==========================================================================================
