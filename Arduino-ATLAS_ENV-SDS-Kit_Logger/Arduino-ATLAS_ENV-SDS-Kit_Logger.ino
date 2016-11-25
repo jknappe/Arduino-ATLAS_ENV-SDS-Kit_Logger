@@ -196,11 +196,14 @@ void loop() {
     
     for (int portNr = 0; portNr < 5; portNr ++) {     //FOR 0 to 4  
       measurePort(portNr);                            //Measure port
-      Serial.print(F(","));             
+      Serial.print(F(","));                       
+        file.print(F(","));             
       Serial.print(sensorData);                       //And print measured data
+        file.print(sensorData);                       //And print measured data
     }                                                 //End FOR                  
     
     Serial.println();    
+      file.println();    
   }                                                   //End IF    
 
 
